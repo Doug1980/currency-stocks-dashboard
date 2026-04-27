@@ -1,14 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowDownUp, Loader2 } from "lucide-react";
 import { CurrencySelector } from "./CurrencySelector";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { useExchangeRate } from "@/hooks/useExchangeRate";
 import { getCurrencyByCode } from "@/lib/currencies";
+import type { ConversionResult } from "@/types";
 
-export function CurrencyConverter() {
+interface CurrencyConverterProps {
+  /**
+   * Conversão a ser pré-carregada (ex: ao clicar no histórico).
+   * Quando muda, o conversor atualiza seus campos.
+   */
+  preset?: ConversionResult | null;
+  /**
+   * Callback quando uma conversão é confirmada.
+   * Usado pelo histórico pra salvar.
+   */
+  onConvert?: (conversion: Omit<ConversionResult, "timestamp">) => void;
+}
+
+export function CurrencyConverter({
+  preset,
+  onConvert,
+}: CurrencyConverterProps) {
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [toCurrency, setToCurrency] = useState("BRL");
   const [amount, setAmount] = useState<number>(100);
@@ -21,6 +38,32 @@ export function CurrencyConverter() {
 
   // Calcula resultado
   const result = rate !== null ? amount * rate : 0;
+
+  // Aplica preset (ao clicar numa conversão do histórico)
+  useEffect(() => {
+    if (preset) {
+      setFromCurrency(preset.from);
+      setToCurrency(preset.to);
+      setAmount(preset.amount);
+    }
+  }, [preset]);
+
+  // Salva no histórico quando conversão estabiliza (debounce 800ms)
+  useEffect(() => {
+    if (!onConvert || rate === null || amount <= 0) return;
+
+    const timer = setTimeout(() => {
+      onConvert({
+        from: fromCurrency,
+        to: toCurrency,
+        amount,
+        result,
+        rate,
+      });
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [fromCurrency, toCurrency, amount, rate, result, onConvert]);
 
   function handleSwap() {
     setFromCurrency(toCurrency);
@@ -35,7 +78,7 @@ export function CurrencyConverter() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full">
       <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 border border-gray-100">
         {/* Header */}
         <div className="text-center mb-8">
@@ -165,7 +208,8 @@ export function CurrencyConverter() {
 
       {/* Disclaimer */}
       <p className="text-center text-xs text-[var(--color-text-muted)] mt-4">
-        Taxas de referência. Valores podem variar conforme a instituição financeira.
+        Taxas de referência. Valores podem variar conforme a instituição
+        financeira.
       </p>
     </div>
   );
