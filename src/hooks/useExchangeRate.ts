@@ -1,50 +1,35 @@
 import { useState, useEffect } from "react";
 
-/**
- * Mock de taxas de câmbio relativas ao USD.
- * Valores aproximados de referência (atualizados em 2026).
- *
- * Na Etapa 3, esse mock será substituído pela API Frankfurter.
- */
-const MOCK_RATES_USD: Record<string, number> = {
-  USD: 1.0,
-  EUR: 0.92,
-  BRL: 5.48,
-  GBP: 0.79,
-  JPY: 149.5,
-  CNY: 7.24,
-  CHF: 0.88,
-  CAD: 1.36,
-  AUD: 1.52,
-  NZD: 1.65,
-  SEK: 10.4,
-  NOK: 10.6,
-  DKK: 6.85,
-  MXN: 17.2,
-  INR: 83.1,
-  KRW: 1335.0,
-  SGD: 1.34,
-  HKD: 7.81,
-  ZAR: 18.7,
-  TRY: 32.4,
-};
-
 interface UseExchangeRateResult {
   rate: number | null;
   loading: boolean;
   error: string | null;
+  date: string | null;
+}
+
+interface ExchangeApiResponse {
+  from: string;
+  to: string;
+  rate: number;
+  date: string;
+}
+
+interface ExchangeApiError {
+  error: string;
 }
 
 /**
  * Hook que retorna a taxa de câmbio entre duas moedas.
  *
+ * Consome o endpoint /api/exchange (BFF do projeto).
+ * Cancela requisições anteriores quando os parâmetros mudam.
+ *
  * @param from Código da moeda de origem (ex: "USD")
  * @param to Código da moeda de destino (ex: "BRL")
- * @returns { rate, loading, error }
+ * @returns { rate, loading, error, date }
  *
  * @example
  * const { rate, loading } = useExchangeRate("USD", "BRL");
- * // rate = 5.48 (USD para BRL)
  */
 export function useExchangeRate(
   from: string,
@@ -53,36 +38,56 @@ export function useExchangeRate(
   const [rate, setRate] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [date, setDate] = useState<string | null>(null);
 
   useEffect(() => {
     if (!from || !to) return;
 
-    setLoading(true);
-    setError(null);
+    const controller = new AbortController();
 
-    // Simula latência de rede (300ms) — UX realista
-    const timer = setTimeout(() => {
+    async function fetchRate() {
+      setLoading(true);
+      setError(null);
+
       try {
-        const fromRate = MOCK_RATES_USD[from];
-        const toRate = MOCK_RATES_USD[to];
+        const response = await fetch(
+          `/api/exchange?from=${from}&to=${to}`,
+          { signal: controller.signal }
+        );
 
-        if (fromRate === undefined || toRate === undefined) {
-          throw new Error(`Moeda não suportada: ${from} ou ${to}`);
+        const data = (await response.json()) as
+          | ExchangeApiResponse
+          | ExchangeApiError;
+
+        if (!response.ok) {
+          const errorMessage =
+            "error" in data ? data.error : "Erro ao buscar taxa";
+          throw new Error(errorMessage);
         }
 
-        // Conversão via USD como base: (1/from) * to
-        const calculatedRate = toRate / fromRate;
-        setRate(calculatedRate);
+        if ("rate" in data) {
+          setRate(data.rate);
+          setDate(data.date);
+        }
       } catch (err) {
+        // Ignora erros de cancelamento (são esperados)
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
+
         setError(err instanceof Error ? err.message : "Erro desconhecido");
         setRate(null);
+        setDate(null);
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }
 
-    return () => clearTimeout(timer);
+    fetchRate();
+
+    // Cleanup: cancela request se componente desmontar ou params mudarem
+    return () => controller.abort();
   }, [from, to]);
 
-  return { rate, loading, error };
+  return { rate, loading, error, date };
 }
