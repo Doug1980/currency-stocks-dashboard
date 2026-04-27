@@ -1,5 +1,5 @@
-import { ArrowRight, TrendingUp } from "lucide-react";
-import { CurrencyConverter } from "@/components/converter/CurrencyConverter";
+import Link from "next/link";
+import { ArrowRight, TrendingUp, Wallet, BarChart3 } from "lucide-react";
 
 export default function Home() {
   return (
@@ -21,9 +21,9 @@ export default function Home() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <a href="#converter" className="btn btn-primary">
+              <Link href="/converter" className="btn btn-primary">
                 Começar agora <ArrowRight size={18} />
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -45,10 +45,124 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CONVERSOR */}
-      <section id="converter" className="section section-light">
-        <div className="section-content">
-          <CurrencyConverter />
+      {/* ABOUT */}
+      <section className="section section-light">
+        <div className="section-content text-center">
+          <h2 className="heading-lg">Sobre o projeto</h2>
+          <p className="text-lg text-[var(--color-text-secondary)] max-w-3xl mx-auto leading-relaxed">
+            FX Dashboard é uma aplicação completa de conversão de moedas e
+            acompanhamento de ações em tempo real. Construído com Next.js 15,
+            TypeScript e Tailwind CSS, integra APIs públicas do Banco Central
+            Europeu (Frankfurter) e Finnhub para entregar dados confiáveis e
+            atualizados em uma interface elegante e responsiva.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
+            <div className="card-light">
+              <Wallet
+                className="mx-auto mb-4 text-[var(--color-brand)]"
+                size={40}
+              />
+              <h3 className="font-bold text-xl mb-2">20 Moedas</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Conversão entre as principais moedas globais
+              </p>
+            </div>
+
+            <div className="card-light">
+              <BarChart3
+                className="mx-auto mb-4 text-[var(--color-brand)]"
+                size={40}
+              />
+              <h3 className="font-bold text-xl mb-2">Ações ao Vivo</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Cotações de empresas globais com atualização automática
+              </p>
+            </div>
+
+            <div className="card-light">
+              <TrendingUp
+                className="mx-auto mb-4 text-[var(--color-brand)]"
+                size={40}
+              />
+              <h3 className="font-bold text-xl mb-2">Tempo Real</h3>
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Dados atualizados direto das APIs oficiais
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ROADMAP */}
+      <section className="section section-brand">
+        <div className="section-content text-center">
+          <h2 className="heading-lg">Roadmap do Projeto</h2>
+          <p className="text-lg opacity-90 max-w-2xl mx-auto mb-12">
+            Construção iterativa em 6 etapas, cada uma documentada e versionada
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="card-glass">
+              <div className="text-sm uppercase tracking-wider opacity-70 mb-2">
+                Etapa 1
+              </div>
+              <h3 className="font-bold text-xl mb-2">Setup Inicial</h3>
+              <p className="text-sm opacity-80">
+                Next.js 15, TypeScript, Tailwind v4 e identidade visual
+              </p>
+            </div>
+
+            <div className="card-glass">
+              <div className="text-sm uppercase tracking-wider opacity-70 mb-2">
+                Etapa 2
+              </div>
+              <h3 className="font-bold text-xl mb-2">Conversor de Moedas</h3>
+              <p className="text-sm opacity-80">
+                20 moedas, swap animado e histórico local
+              </p>
+            </div>
+
+            <div className="card-glass">
+              <div className="text-sm uppercase tracking-wider opacity-70 mb-2">
+                Etapa 3
+              </div>
+              <h3 className="font-bold text-xl mb-2">API Routes (BFF)</h3>
+              <p className="text-sm opacity-80">
+                Backend for Frontend com Frankfurter e Finnhub
+              </p>
+            </div>
+
+            <div className="card-glass">
+              <div className="text-sm uppercase tracking-wider opacity-70 mb-2">
+                Etapa 4
+              </div>
+              <h3 className="font-bold text-xl mb-2">Painel de Ações</h3>
+              <p className="text-sm opacity-80">
+                Cards interativos com polling em tempo real
+              </p>
+            </div>
+
+            <div className="card-glass">
+              <div className="text-sm uppercase tracking-wider opacity-70 mb-2">
+                Etapa 5
+              </div>
+              <h3 className="font-bold text-xl mb-2">Polimento</h3>
+              <p className="text-sm opacity-80">
+                Skeletons, error states e responsividade total
+              </p>
+            </div>
+
+            <div className="card-glass">
+              <div className="text-sm uppercase tracking-wider opacity-70 mb-2">
+                Etapa 6
+              </div>
+              <h3 className="font-bold text-xl mb-2">Deploy</h3>
+              <p className="text-sm opacity-80">
+                Publicação na Vercel com CI/CD automático
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
