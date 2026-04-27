@@ -31,7 +31,7 @@ export function CurrencyConverter({
   const [amount, setAmount] = useState<number>(100);
   const [swapRotation, setSwapRotation] = useState(0);
 
-  const { rate, loading, error } = useExchangeRate(fromCurrency, toCurrency);
+  const { rate, loading, error, date } = useExchangeRate(fromCurrency, toCurrency);
 
   const fromInfo = getCurrencyByCode(fromCurrency);
   const toInfo = getCurrencyByCode(toCurrency);
@@ -195,6 +195,19 @@ export function CurrencyConverter({
             </span>
           </div>
         </div>
+
+        {/* Data de atualização */}
+        {date && !loading && !error && (
+          <div className="mt-2 flex items-center justify-end gap-1.5 text-xs text-[var(--color-text-muted)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-up)] animate-pulse" />
+            <span>
+              Atualizado em{" "}
+              <span className="font-mono font-semibold">
+                {new Date(date + "T00:00:00").toLocaleDateString("pt-BR")}
+              </span>
+            </span>
+          </div>
+        )}
 
         {/* Mensagem de status */}
         {error && (
