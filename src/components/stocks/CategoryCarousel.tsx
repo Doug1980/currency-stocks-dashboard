@@ -38,6 +38,8 @@ interface CategoryCarouselProps {
   showRanking?: boolean;
   /** Mensagem custom para estado vazio */
   emptyMessage?: string;
+  /** Moeda dos cards. USD por padrão. */
+  currency?: "USD" | "BRL";
 }
 
 /**
@@ -53,6 +55,7 @@ export function CategoryCarousel({
   quotes,
   showRanking = false,
   emptyMessage = "Nenhum ativo disponível",
+  currency = "USD",
 }: CategoryCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -99,7 +102,7 @@ export function CategoryCarousel({
   const isEmpty = quotes.length === 0;
 
   return (
-    <section className="mb-10">
+    <section className="mb-16">
       {/* Header da categoria */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -162,7 +165,7 @@ export function CategoryCarousel({
         /* Container do scroll horizontal */
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2 scroll-smooth snap-x snap-mandatory"
+          className="flex gap-4 overflow-x-auto pt-5 pb-4 -mx-2 px-2 scroll-smooth snap-x snap-mandatory"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -173,10 +176,11 @@ export function CategoryCarousel({
               key={quote.symbol}
               className="snap-start flex-shrink-0"
             >
-              <StockCard
+               <StockCard
                 quote={quote}
                 index={index}
                 rank={showRanking ? index + 1 : undefined}
+                currency={currency}
               />
             </div>
           ))}

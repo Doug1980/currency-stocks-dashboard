@@ -9,6 +9,8 @@ interface StockCardProps {
   quote: StockQuote;
   index?: number;
   rank?: number;
+  /** Moeda exibida nos preços. USD por padrão. */
+  currency?: "USD" | "BRL";
 }
 
 /**
@@ -20,8 +22,14 @@ interface StockCardProps {
  * - Animação de entrada em cascade via index
  * - Suporta ranking (rank prop) pro carrossel Top Movers
  */
-export function StockCard({ quote, index = 0, rank }: StockCardProps) {
-   // Defesas: se algum campo numérico vier null/undefined, usa 0 como fallback
+export function StockCard({
+  quote,
+  index = 0,
+  rank,
+  currency = "USD",
+}: StockCardProps) {
+  const currencyLabel = currency === "BRL" ? "R$" : "US$";
+  // Defesas: se algum campo numérico vier null/undefined, usa 0 como fallback
   const change = quote.change ?? 0;
   const percentChange = quote.percentChange ?? 0;
   const current = quote.current ?? 0;
@@ -49,7 +57,7 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
     >
       {/* Badge de ranking (Top Movers) */}
       {rank !== undefined && (
-        <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-[var(--color-brand)] text-white font-bold text-sm flex items-center justify-center shadow-md">
+        <div className="absolute -top-2 -left-2 w-8 h-8 rounded-full bg-[var(--color-brand)] text-white font-bold text-sm flex items-center justify-center shadow-md ring-2 ring-white">
           {rank}
         </div>
       )}
@@ -98,9 +106,9 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
 
       {/* Preço principal */}
       <div className="mb-4">
-        <div className="flex items-baseline gap-2">
+         <div className="flex items-baseline gap-2">
           <span className="text-xs text-[var(--color-text-muted)] font-mono">
-            US$
+            {currencyLabel}
           </span>
           <span
             className={`text-3xl font-bold font-mono ${
@@ -113,10 +121,6 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
         <div className="text-sm font-mono text-[var(--color-text-muted)] mt-1">
           {isPositive ? "+" : ""}
           {change.toFixed(2)} hoje
-        </div>
-        <div className="text-sm font-mono text-[var(--color-text-muted)] mt-1">
-          {isPositive ? "+" : ""}
-          {quote.change.toFixed(2)} hoje
         </div>
       </div>
 
@@ -144,7 +148,7 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
           <div className="text-[var(--color-text-muted)] uppercase tracking-wider mb-1">
             Mínima
           </div>
-         <div className="font-mono font-semibold text-red-700">
+          <div className="font-mono font-semibold text-red-700">
             {low.toFixed(2)}
           </div>
         </div>
