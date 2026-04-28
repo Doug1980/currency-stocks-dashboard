@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Trash2, RefreshCw } from "lucide-react";
 import type { ConversionResult } from "@/types";
 import { getCurrencyByCode } from "@/lib/currencies";
+import { CurrencyFlag } from "@/components/currency/CurrencyFlag";
 
 interface ConversionHistoryProps {
   history: ConversionResult[];
@@ -12,37 +13,24 @@ interface ConversionHistoryProps {
   isHydrated: boolean;
 }
 
-/**
- * Formata um timestamp em texto relativo em português.
- * Ex: "agora", "há 2 minutos", "há 1 hora"
- */
 function formatRelativeTime(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-
   if (seconds < 10) return "agora";
   if (seconds < 60) return `há ${seconds}s`;
-
   const minutes = Math.floor(seconds / 60);
   if (minutes < 60) return `há ${minutes}min`;
-
   const hours = Math.floor(minutes / 60);
   if (hours < 24) return `há ${hours}h`;
-
   const days = Math.floor(hours / 24);
   return `há ${days}d`;
 }
 
-/**
- * Card lateral com histórico das últimas 5 conversões.
- * Persistido em localStorage via useConversionHistory.
- */
 export function ConversionHistory({
   history,
   onSelect,
   onClear,
   isHydrated,
 }: ConversionHistoryProps) {
-  // Aguarda hidratação pra evitar mismatch SSR/Client
   if (!isHydrated) {
     return (
       <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
@@ -57,7 +45,6 @@ export function ConversionHistory({
 
   return (
     <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
-      {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Clock size={18} className="text-[var(--color-brand)]" />
@@ -65,7 +52,6 @@ export function ConversionHistory({
             Histórico
           </h3>
         </div>
-
         {history.length > 0 && (
           <button
             type="button"
@@ -79,13 +65,9 @@ export function ConversionHistory({
         )}
       </div>
 
-      {/* Lista de conversões */}
       {history.length === 0 ? (
         <div className="py-8 text-center">
-          <Clock
-            size={32}
-            className="mx-auto mb-3 text-[var(--color-text-muted)] opacity-30"
-          />
+          <Clock size={32} className="mx-auto mb-3 text-[var(--color-text-muted)] opacity-30" />
           <p className="text-sm text-[var(--color-text-muted)]">
             Nenhuma conversão ainda.
             <br />
@@ -113,15 +95,26 @@ export function ConversionHistory({
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-base">{fromInfo?.flag}</span>
+                      {fromInfo && (
+                        <CurrencyFlag
+                          countryCode={fromInfo.countryCode}
+                          emoji={fromInfo.flag}
+                          size={20}
+                          alt={`Bandeira ${item.from}`}
+                        />
+                      )}
                       <span className="font-mono font-bold text-xs text-[var(--color-text-primary)]">
                         {item.from}
                       </span>
-                      <RefreshCw
-                        size={10}
-                        className="text-[var(--color-text-muted)]"
-                      />
-                      <span className="text-base">{toInfo?.flag}</span>
+                      <RefreshCw size={10} className="text-[var(--color-text-muted)]" />
+                      {toInfo && (
+                        <CurrencyFlag
+                          countryCode={toInfo.countryCode}
+                          emoji={toInfo.flag}
+                          size={20}
+                          alt={`Bandeira ${item.to}`}
+                        />
+                      )}
                       <span className="font-mono font-bold text-xs text-[var(--color-text-primary)]">
                         {item.to}
                       </span>

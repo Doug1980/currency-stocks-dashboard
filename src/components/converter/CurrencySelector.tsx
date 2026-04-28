@@ -9,6 +9,7 @@ import {
   getCurrencyByCode,
 } from "@/lib/currencies";
 import type { Currency } from "@/types";
+import { CurrencyFlag } from "@/components/currency/CurrencyFlag";
 
 interface CurrencySelectorProps {
   value: string;
@@ -76,8 +77,15 @@ export function CurrencySelector({
         disabled={disabled}
         className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-[var(--color-brand)] focus:border-[var(--color-brand)] focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">{selected?.flag}</span>
+         <div className="flex items-center gap-3">
+          {selected && (
+            <CurrencyFlag
+              countryCode={selected.countryCode}
+              emoji={selected.flag}
+              size={32}
+              alt={`Bandeira ${selected.code}`}
+            />
+          )}
           <div className="text-left">
             <div className="font-bold text-[var(--color-text-primary)]">
               {selected?.code}
@@ -138,7 +146,12 @@ export function CurrencySelector({
                         isActive ? "bg-red-50" : ""
                       }`}
                     >
-                      <span className="text-2xl">{currency.flag}</span>
+                      <CurrencyFlag
+                        countryCode={currency.countryCode}
+                        emoji={currency.flag}
+                        size={32}
+                        alt={`Bandeira ${currency.code}`}
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="font-bold text-sm text-[var(--color-text-primary)]">
                           {currency.code}
