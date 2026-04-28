@@ -50,7 +50,7 @@ export default function StocksPage() {
               Painel de Mercado
             </h1>
             <p className="text-[var(--color-text-muted)]">
-              18 ativos em 5 categorias com cotação ao vivo
+              60 ativos em 5 categorias com cotação ao vivo
             </p>
           </div>
 
@@ -140,11 +140,13 @@ export default function StocksPage() {
           )}
 
         {!loading &&
-          CATEGORIES.map((category) => (
+          CATEGORIES.filter((c) => c.id !== "topmovers").map((category) => (
             <CategoryCarousel
               key={category.id}
               category={category}
-              quotes={byCategory[category.id]}
+              quotes={
+                byCategory[category.id as Exclude<typeof category.id, "topmovers">]
+              }
             />
           ))}
 
