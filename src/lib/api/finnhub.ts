@@ -62,7 +62,7 @@ export async function fetchStockQuote(
 
   const response = await fetch(url, {
     // Cache de 60 segundos (cotações mudam constantemente)
-    next: { revalidate: 60 },
+    next: { revalidate: 120 },
   });
 
   if (!response.ok) {
