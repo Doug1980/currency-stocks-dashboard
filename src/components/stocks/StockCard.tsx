@@ -21,9 +21,17 @@ interface StockCardProps {
  * - Suporta ranking (rank prop) pro carrossel Top Movers
  */
 export function StockCard({ quote, index = 0, rank }: StockCardProps) {
-  const isPositive = quote.change >= 0;
+   // Defesas: se algum campo numérico vier null/undefined, usa 0 como fallback
+  const change = quote.change ?? 0;
+  const percentChange = quote.percentChange ?? 0;
+  const current = quote.current ?? 0;
+  const open = quote.open ?? 0;
+  const high = quote.high ?? 0;
+  const low = quote.low ?? 0;
+
+  const isPositive = change >= 0;
   const isCrypto = quote.category === "crypto";
-  const isHot = quote.percentChange > 3;
+  const isHot = percentChange > 3;
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
 
   return (
@@ -83,7 +91,7 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
           <TrendIcon size={14} />
           <span className="font-mono">
             {isPositive ? "+" : ""}
-            {quote.percentChange.toFixed(2)}%
+            {percentChange.toFixed(2)}%
           </span>
         </div>
       </div>
@@ -99,8 +107,12 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
               isPositive ? "text-green-700" : "text-red-700"
             }`}
           >
-            <AnimatedNumber value={quote.current} decimals={2} />
+            <AnimatedNumber value={current} decimals={2} />
           </span>
+        </div>
+        <div className="text-sm font-mono text-[var(--color-text-muted)] mt-1">
+          {isPositive ? "+" : ""}
+          {change.toFixed(2)} hoje
         </div>
         <div className="text-sm font-mono text-[var(--color-text-muted)] mt-1">
           {isPositive ? "+" : ""}
@@ -115,7 +127,7 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
             Abertura
           </div>
           <div className="font-mono font-semibold text-[var(--color-text-primary)]">
-            {quote.open.toFixed(2)}
+            {open.toFixed(2)}
           </div>
         </div>
 
@@ -124,7 +136,7 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
             Máxima
           </div>
           <div className="font-mono font-semibold text-green-700">
-            {quote.high.toFixed(2)}
+            {high.toFixed(2)}
           </div>
         </div>
 
@@ -132,8 +144,8 @@ export function StockCard({ quote, index = 0, rank }: StockCardProps) {
           <div className="text-[var(--color-text-muted)] uppercase tracking-wider mb-1">
             Mínima
           </div>
-          <div className="font-mono font-semibold text-red-700">
-            {quote.low.toFixed(2)}
+         <div className="font-mono font-semibold text-red-700">
+            {low.toFixed(2)}
           </div>
         </div>
       </div>
