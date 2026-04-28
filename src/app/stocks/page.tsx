@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, RefreshCw, AlertCircle } from "lucide-react";
+import { RefreshCw, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { CategoryCarousel } from "@/components/stocks/CategoryCarousel";
 import { useStockQuote } from "@/hooks/useStockQuote";
 import { CATEGORIES } from "@/lib/stocks";
+import { Navbar } from "@/components/layout/Navbar";
 
 const TOP_MOVERS_CATEGORY = {
   id: "topmovers" as const,
@@ -20,30 +21,9 @@ export default function StocksPage() {
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-base)]">
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] transition-colors font-semibold"
-          >
-            <ArrowLeft size={18} />
-            <span>Voltar</span>
-          </Link>
+     <Navbar />
 
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-[var(--color-text-primary)]">
-              FX
-            </span>
-            <span className="text-2xl font-light text-[var(--color-brand)]">
-              Dashboard
-            </span>
-          </div>
-
-          <div className="w-20" />
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 pt-8 pb-12">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] mb-2">
