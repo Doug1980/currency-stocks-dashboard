@@ -21,15 +21,26 @@ export interface ConversionResult {
   timestamp: number;
 }
 
-export interface Stock {
-  symbol: string;
+export type CategoryId = "crypto" | "tech" | "financial" | "consumer" | "health";
+
+export interface StockCategory {
+  id: CategoryId;
   name: string;
-  logo?: string;
+  icon: string;
+  color: string;
+}
+
+export interface Stock {
+  symbol: string;       // Símbolo de exibição (ex: "BTC", "AAPL")
+  apiSymbol: string;    // Símbolo na API Finnhub (ex: "BINANCE:BTCUSDT", "AAPL")
+  name: string;
+  category: CategoryId;
 }
 
 export interface StockQuote {
   symbol: string;
   name: string;
+  category: CategoryId;
   current: number;
   change: number;
   percentChange: number;
