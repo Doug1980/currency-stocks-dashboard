@@ -244,3 +244,8 @@
     animation: slideRight 1s ease forwards;
   }
 }
+
+/* Esconde scrollbar mas mantém funcionalidade */
+.scroll-smooth::-webkit-scrollbar {
+  display: none;
+}
