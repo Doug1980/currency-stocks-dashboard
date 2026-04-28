@@ -21,7 +21,13 @@ export interface ConversionResult {
   timestamp: number;
 }
 
-export type CategoryId = "crypto" | "tech" | "financial" | "consumer" | "health";
+export type CategoryId =
+  | "crypto"
+  | "tech"
+  | "financial"
+  | "consumer"
+  | "health"
+  | "topmovers";
 
 export interface StockCategory {
   id: CategoryId;

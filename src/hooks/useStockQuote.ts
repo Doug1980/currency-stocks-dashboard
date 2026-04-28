@@ -7,7 +7,7 @@ interface UseStockQuoteResult {
   /** Todas as cotações (todas as categorias) */
   quotes: StockQuote[];
   /** Cotações agrupadas por categoria, na ordem definida em CATEGORIES */
-  byCategory: Record<CategoryId, StockQuote[]>;
+  byCategory: Record<RealCategoryId, StockQuote[]>;
   /** Top 5 ativos com maior variação positiva no dia */
   topMovers: StockQuote[];
   loading: boolean;
@@ -24,9 +24,11 @@ interface ApiError {
   error: string;
 }
 
-const POLLING_INTERVAL = 30_000; // 30 segundos
+const POLLING_INTERVAL = 90_000; // 90 segundos (60 ativos x ~1.5 req/min cabe em 60/min)
 
-const EMPTY_BY_CATEGORY: Record<CategoryId, StockQuote[]> = {
+type RealCategoryId = Exclude<CategoryId, "topmovers">;
+
+const EMPTY_BY_CATEGORY: Record<RealCategoryId, StockQuote[]> = {
   crypto: [],
   tech: [],
   financial: [],
@@ -76,7 +78,13 @@ export function useStockQuote(): UseStockQuoteResult {
           // Filtra apenas cotações válidas (sem erro individual)
           const validQuotes = data.quotes.filter(
             (q): q is StockQuote =>
-              !q.error && typeof q.current === "number"
+              !q.error &&
+              typeof q.current === "number" &&
+              typeof q.change === "number" &&
+              typeof q.percentChange === "number" &&
+              typeof q.high === "number" &&
+              typeof q.low === "number" &&
+              typeof q.open === "number"
           );
           setQuotes(validQuotes);
           setLastUpdated(new Date());
@@ -102,7 +110,7 @@ export function useStockQuote(): UseStockQuoteResult {
   const byCategory = useMemo(() => {
     if (quotes.length === 0) return EMPTY_BY_CATEGORY;
 
-    const grouped: Record<CategoryId, StockQuote[]> = {
+    const grouped: Record<RealCategoryId, StockQuote[]> = {
       crypto: [],
       tech: [],
       financial: [],
@@ -111,7 +119,9 @@ export function useStockQuote(): UseStockQuoteResult {
     };
 
     for (const quote of quotes) {
-      grouped[quote.category]?.push(quote);
+      if (quote.category !== "topmovers") {
+        grouped[quote.category]?.push(quote);
+      }
     }
 
     return grouped;
@@ -122,7 +132,7 @@ export function useStockQuote(): UseStockQuoteResult {
     return [...quotes]
       .filter((q) => q.percentChange > 0)
       .sort((a, b) => b.percentChange - a.percentChange)
-      .slice(0, 5);
+      .slice(0, 12);
   }, [quotes]);
 
   function refresh() {
