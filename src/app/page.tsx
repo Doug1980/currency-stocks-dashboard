@@ -1,16 +1,16 @@
 import Link from "next/link";
-import { ArrowRight, TrendingUp } from "lucide-react";
-import { Navbar } from "@/components/layout/Navbar";
+import { ArrowRight, DollarSign } from "lucide-react";
 
 export default function Home() {
   return (
-    <>
-      <Navbar variant="dark" />
-      <main className="min-h-[calc(100vh-72px)] flex items-center section-dark">
-        <div className="section-content">
-          <div className="max-w-3xl mx-auto text-center animate-left">
+    <main className="min-h-screen flex items-center section-dark">
+      <div className="section-content w-full">
+        <div className="flex items-center justify-between gap-12">
+
+          {/* Texto à esquerda */}
+          <div className="max-w-3xl animate-left">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
-              <span className="w-2 h-2 rounded-full bg-[var(--color-up)] animate-pulse" />
+              <DollarSign size={20} className="text-[var(--color-up)] animate-pulse" />
               <span className="text-sm font-medium uppercase tracking-wider text-white">
                 Cotações em tempo real
               </span>
@@ -18,25 +18,29 @@ export default function Home() {
 
             <h1 className="heading-xl mb-6 text-white">FX Dashboard</h1>
 
-            <p className="text-xl md:text-2xl font-light mb-12 opacity-90 text-white max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl font-light mb-12 opacity-90 text-white max-w-2xl">
               Conversão de moedas, mercado internacional e ações da B3 com
               dados ao vivo das fontes oficiais.
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-4">
+            <div className="flex flex-wrap gap-4">
               <Link href="/converter" className="btn btn-primary">
-                Converter Moedas <ArrowRight size={18} />
-              </Link>
-              <Link href="/stocks" className="btn btn-secondary">
-                <TrendingUp size={18} /> Mercado Internacional 🌎
-              </Link>
-              <Link href="/stocks-br" className="btn btn-secondary">
-                <TrendingUp size={18} /> Mercado Nacional 🇧🇷
+                Comece agora <ArrowRight size={18} />
               </Link>
             </div>
           </div>
+
+          {/* Logo à direita */}
+          <div className="hidden md:flex items-center justify-center flex-shrink-0">
+            <img
+              src="/finace_logo.svg"
+              alt="Finance Logo"
+              className="w-[400px] h-[400px] object-contain"
+            />
+          </div>
+
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
