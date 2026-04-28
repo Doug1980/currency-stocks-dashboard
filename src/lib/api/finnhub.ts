@@ -2,7 +2,9 @@
  * Cliente da API Finnhub (https://finnhub.io/).
  *
  * Free tier: 60 requests/minute.
- * Requer API key (FINNHUB_API_KEY no .env.local).
+ * Suporta ações americanas e criptomoedas (via Binance).
+ *
+ * Requer FINNHUB_API_KEY no .env.local.
  */
 
 const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
@@ -36,13 +38,18 @@ export interface StockQuoteData {
 }
 
 /**
- * Busca a cotação atual de uma ação.
+ * Busca a cotação atual de um ativo.
  *
- * @param symbol Símbolo da ação (ex: "AAPL")
+ * @param apiSymbol Símbolo no formato Finnhub
+ *   - Ações: símbolo direto (ex: "AAPL")
+ *   - Cripto: prefixo BINANCE: (ex: "BINANCE:BTCUSDT")
+ * @param displaySymbol Símbolo de exibição (ex: "BTC", "AAPL")
  * @returns Dados normalizados de cotação
- * @throws Erro se a API key não estiver configurada ou se houver falha na requisição
  */
-export async function fetchStockQuote(symbol: string): Promise<StockQuoteData> {
+export async function fetchStockQuote(
+  apiSymbol: string,
+  displaySymbol: string
+): Promise<StockQuoteData> {
   const apiKey = process.env.FINNHUB_API_KEY;
 
   if (!apiKey || apiKey === "placeholder_temporario") {
@@ -51,10 +58,10 @@ export async function fetchStockQuote(symbol: string): Promise<StockQuoteData> {
     );
   }
 
-  const url = `${FINNHUB_BASE_URL}/quote?symbol=${symbol}&token=${apiKey}`;
+  const url = `${FINNHUB_BASE_URL}/quote?symbol=${apiSymbol}&token=${apiKey}`;
 
   const response = await fetch(url, {
-    // Cache de 60 segundos no servidor (cotações mudam constantemente)
+    // Cache de 60 segundos (cotações mudam constantemente)
     next: { revalidate: 60 },
   });
 
@@ -74,11 +81,11 @@ export async function fetchStockQuote(symbol: string): Promise<StockQuoteData> {
 
   // Finnhub retorna 0 em todos os campos quando o símbolo é inválido
   if (data.c === 0 && data.pc === 0) {
-    throw new Error(`Cotação não disponível para o símbolo: ${symbol}`);
+    throw new Error(`Cotação não disponível para: ${displaySymbol}`);
   }
 
   return {
-    symbol,
+    symbol: displaySymbol,
     current: data.c,
     change: data.d,
     percentChange: data.dp,
@@ -86,6 +93,6 @@ export async function fetchStockQuote(symbol: string): Promise<StockQuoteData> {
     low: data.l,
     open: data.o,
     previousClose: data.pc,
-    timestamp: data.t * 1000, // Finnhub retorna em segundos, convertemos pra ms
+    timestamp: data.t * 1000, // segundos -> ms
   };
 }
