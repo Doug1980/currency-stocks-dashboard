@@ -14,7 +14,7 @@ export default function Template({
       transition={{
         type: "tween",
         ease: "easeOut",
-        duration: 1.2,
+        duration: 1.5,
       }}
     >
       {children}

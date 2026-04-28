@@ -198,8 +198,17 @@ export function CurrencyConverter({
 
         {/* Data de atualização */}
         {date && !loading && !error && (
-          <div className="mt-2 flex items-center justify-end gap-1.5 text-xs text-[var(--color-text-muted)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-up)] animate-pulse" />
+          <div className="mt-3 flex items-center justify-end gap-2 text-xs text-[var(--color-text-muted)]">
+            <span
+              className="inline-block rounded-full"
+              style={{
+                width: "8px",
+                height: "8px",
+                backgroundColor: "#10B981",
+                boxShadow: "0 0 0 0 rgba(16, 185, 129, 0.7)",
+                animation: "livePulse 2s infinite",
+              }}
+            />
             <span>
               Atualizado em{" "}
               <span className="font-mono font-semibold">

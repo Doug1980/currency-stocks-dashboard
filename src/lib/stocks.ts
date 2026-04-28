@@ -31,7 +31,7 @@ export const STOCKS: Stock[] = [
   { symbol: "DOT", apiSymbol: "BINANCE:DOTUSDT", name: "Polkadot", category: "crypto" },
   { symbol: "LINK", apiSymbol: "BINANCE:LINKUSDT", name: "Chainlink", category: "crypto" },
   { symbol: "LTC", apiSymbol: "BINANCE:LTCUSDT", name: "Litecoin", category: "crypto" },
-  { symbol: "MATIC", apiSymbol: "BINANCE:MATICUSDT", name: "Polygon", category: "crypto" },
+  { symbol: "POL", apiSymbol: "BINANCE:POLUSDT", name: "Polygon", category: "crypto" },
 
   // 📈 Tecnologia (12)
   { symbol: "AAPL", apiSymbol: "AAPL", name: "Apple Inc.", category: "tech" },
