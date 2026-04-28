@@ -3,6 +3,8 @@ export interface Currency {
   name: string;
   symbol: string;
   flag: string;
+  /** ISO 3166-1 alpha-2 código do país (minúsculo). Usado para flagcdn.com */
+  countryCode: string;
 }
 
 export interface ExchangeRate {
