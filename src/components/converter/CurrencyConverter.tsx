@@ -10,16 +10,53 @@ import { getCurrencyByCode } from "@/lib/currencies";
 import type { ConversionResult } from "@/types";
 
 interface CurrencyConverterProps {
-  /**
-   * Conversão a ser pré-carregada (ex: ao clicar no histórico).
-   * Quando muda, o conversor atualiza seus campos.
-   */
+  /** Conversão a ser pré-carregada (ex: ao clicar no histórico). */
   preset?: ConversionResult | null;
-  /**
-   * Callback quando uma conversão é confirmada.
-   * Usado pelo histórico pra salvar.
-   */
+  /** Callback quando uma conversão é confirmada. */
   onConvert?: (conversion: Omit<ConversionResult, "timestamp">) => void;
+}
+
+/**
+ * Formata um número pro padrão brasileiro com vírgula.
+ * Ex: 100.5 → "100,50" / 1234.56 → "1.234,56"
+ */
+function formatBR(value: number): string {
+  if (value === 0) return "";
+  return value.toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+/**
+ * Converte string do usuário pra número.
+ * Aceita "100", "100.50", "100,50", "1.234,56".
+ */
+function parseUserInput(input: string): number {
+  if (!input) return 0;
+
+  // Remove tudo exceto dígitos, ponto e vírgula
+  const cleaned = input.replace(/[^\d.,]/g, "");
+
+  // Se tem múltiplos separadores (ex: "1.234,56"), trata como BR
+  const lastComma = cleaned.lastIndexOf(",");
+  const lastDot = cleaned.lastIndexOf(".");
+
+  let normalized: string;
+
+  if (lastComma > lastDot) {
+    // Vírgula é o decimal (formato BR): remove pontos, troca vírgula por ponto
+    normalized = cleaned.replace(/\./g, "").replace(",", ".");
+  } else if (lastDot > lastComma) {
+    // Ponto é o decimal (formato US): remove vírgulas
+    normalized = cleaned.replace(/,/g, "");
+  } else {
+    // Sem decimal — só dígitos
+    normalized = cleaned;
+  }
+
+  const num = parseFloat(normalized);
+  return isNaN(num) ? 0 : num;
 }
 
 export function CurrencyConverter({
@@ -28,15 +65,21 @@ export function CurrencyConverter({
 }: CurrencyConverterProps) {
   const [fromCurrency, setFromCurrency] = useState("USD");
   const [toCurrency, setToCurrency] = useState("BRL");
+
+  // Estado dual: input visual (string) + valor numérico (cálculo)
+  const [amountInput, setAmountInput] = useState("100,00");
   const [amount, setAmount] = useState<number>(100);
+
   const [swapRotation, setSwapRotation] = useState(0);
 
-  const { rate, loading, error, date } = useExchangeRate(fromCurrency, toCurrency);
+  const { rate, loading, error, date } = useExchangeRate(
+    fromCurrency,
+    toCurrency
+  );
 
   const fromInfo = getCurrencyByCode(fromCurrency);
   const toInfo = getCurrencyByCode(toCurrency);
 
-  // Calcula resultado
   const result = rate !== null ? amount * rate : 0;
 
   // Aplica preset (ao clicar numa conversão do histórico)
@@ -45,10 +88,11 @@ export function CurrencyConverter({
       setFromCurrency(preset.from);
       setToCurrency(preset.to);
       setAmount(preset.amount);
+      setAmountInput(formatBR(preset.amount));
     }
   }, [preset]);
 
-  // Salva no histórico quando conversão estabiliza (debounce 800ms)
+  // Salva no histórico (debounce 800ms)
   useEffect(() => {
     if (!onConvert || rate === null || amount <= 0) return;
 
@@ -71,10 +115,35 @@ export function CurrencyConverter({
     setSwapRotation((prev) => prev + 180);
   }
 
+  /**
+   * Durante a digitação: preserva exatamente o que o usuário escreve
+   * (sem reformatação) pra não interromper o fluxo.
+   */
   function handleAmountChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value.replace(/[^\d.,]/g, "").replace(",", ".");
-    const numericValue = parseFloat(value);
-    setAmount(isNaN(numericValue) ? 0 : numericValue);
+    const raw = e.target.value;
+
+    // Filtra: só aceita dígitos, ponto e vírgula
+    const filtered = raw.replace(/[^\d.,]/g, "");
+
+    setAmountInput(filtered);
+    setAmount(parseUserInput(filtered));
+  }
+
+  /**
+   * Ao perder foco: formata o valor pro padrão BR (com vírgula e 2 casas).
+   * Ex: "100.5" → "100,50" / "1234,5" → "1.234,50"
+   */
+  function handleAmountBlur() {
+    const num = parseUserInput(amountInput);
+    setAmountInput(num > 0 ? formatBR(num) : "");
+    setAmount(num);
+  }
+
+  /**
+   * Ao focar: seleciona tudo pra facilitar substituição
+   */
+  function handleAmountFocus(e: React.FocusEvent<HTMLInputElement>) {
+    e.target.select();
   }
 
   return (
@@ -109,13 +178,13 @@ export function CurrencyConverter({
                 <input
                   type="text"
                   inputMode="decimal"
-                  value={amount.toLocaleString("pt-BR", {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 2,
-                  })}
+                  value={amountInput}
                   onChange={handleAmountChange}
+                  onBlur={handleAmountBlur}
+                  onFocus={handleAmountFocus}
                   className="w-full pl-12 pr-4 py-3 bg-white border-2 border-gray-200 rounded-xl text-2xl font-bold font-mono text-[var(--color-text-primary)] focus:border-[var(--color-brand)] focus:outline-none transition-colors"
                   placeholder="0,00"
+                  aria-label="Valor a converter"
                 />
               </div>
             </div>
