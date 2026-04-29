@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: "icons.brapi.dev",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "assets.coingecko.com",
+        pathname: "/**",
+      },
     ],
   },
 };
