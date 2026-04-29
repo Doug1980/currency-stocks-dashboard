@@ -36,7 +36,7 @@ interface NavbarProps {
 /**
  * Navbar sticky com navegação direta entre as páginas do app.
  *
- * - Logo "FX Dashboard" clicável volta pra home
+ * - Logo "FX Finance" clicável volta pra home
  * - 3 links: Conversor, Internacional 🌎, Nacional 🇧🇷
  * - Link ativo recebe estilo destacado
  * - 2 variantes: light (padrão) e dark (sobre seções escuras)
@@ -75,7 +75,7 @@ export function Navbar({ variant = "light" }: NavbarProps) {
               isLight ? "text-[var(--color-brand)]" : "text-[var(--color-brand-light)]"
             }`}
           >
-            Dashboard
+            Finance
           </span>
         </Link>
 
