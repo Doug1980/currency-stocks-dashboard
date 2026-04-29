@@ -25,7 +25,7 @@
 
 O projeto demonstra integração avançada de APIs externas, padrões de arquitetura modernos (BFF), estratégia de cache em camadas, e pipeline completo de CI/CD com deploy automático.
 
-🌐 **Demo ao vivo:** [currency-stocks-dashboard.vercel.app](https://fxfinance.vercel.app/)
+🌐 **Demo ao vivo:** [fxfinance.vercel.app](https://fxfinance.vercel.app/)
 
 ---
 
