@@ -62,7 +62,7 @@ export function Navbar({ variant = "light" }: NavbarProps) {
           aria-label="Ir para home"
         >
           <span
-            className={`text-2xl font-bold tracking-tight transition-colors ${
+            className={`text-4xl font-bold tracking-tight transition-colors ${
               isLight
                 ? "text-[var(--color-text-primary)] group-hover:text-[var(--color-brand)]"
                 : "text-white"
@@ -71,7 +71,7 @@ export function Navbar({ variant = "light" }: NavbarProps) {
             FX
           </span>
           <span
-            className={`text-2xl font-light ${
+            className={`text-3xl font-light ${
               isLight ? "text-[var(--color-brand)]" : "text-[var(--color-brand-light)]"
             }`}
           >

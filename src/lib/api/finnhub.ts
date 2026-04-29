@@ -11,7 +11,6 @@ const FINNHUB_BASE_URL = "https://finnhub.io/api/v1";
 
 /**
  * Resposta bruta do endpoint /quote do Finnhub.
- *
  * Documentação: https://finnhub.io/docs/api/quote
  */
 export interface FinnhubQuoteResponse {
@@ -23,6 +22,25 @@ export interface FinnhubQuoteResponse {
   o: number; // open price of the day
   pc: number; // previous close
   t: number; // timestamp (unix)
+}
+
+/**
+ * Resposta bruta do endpoint /stock/profile2 do Finnhub.
+ * Documentação: https://finnhub.io/docs/api/company-profile2
+ */
+export interface FinnhubProfile2Response {
+  country?: string;
+  currency?: string;
+  exchange?: string;
+  ipo?: string;
+  marketCapitalization?: number;
+  name?: string;
+  phone?: string;
+  shareOutstanding?: number;
+  ticker?: string;
+  weburl?: string;
+  logo?: string;
+  finnhubIndustry?: string;
 }
 
 export interface StockQuoteData {
@@ -61,7 +79,7 @@ export async function fetchStockQuote(
   const url = `${FINNHUB_BASE_URL}/quote?symbol=${apiSymbol}&token=${apiKey}`;
 
   const response = await fetch(url, {
-    // Cache de 60 segundos (cotações mudam constantemente)
+    // Cache de 120 segundos (cotações mudam constantemente)
     next: { revalidate: 120 },
   });
 
@@ -93,6 +111,54 @@ export async function fetchStockQuote(
     low: data.l,
     open: data.o,
     previousClose: data.pc,
-    timestamp: data.t * 1000, // segundos -> ms
+    timestamp: data.t * 1000,
   };
+}
+
+/**
+ * Busca o perfil da empresa (incluindo URL do logo).
+ *
+ * IMPORTANTE: o endpoint /stock/profile2 só funciona pra ações tradicionais.
+ * Cripto (BINANCE:BTCUSDT) sempre retorna objeto vazio. Por isso retornamos null
+ * silenciosamente nesses casos.
+ *
+ * Cache MUITO agressivo (24h): logos não mudam, tickers raramente são removidos.
+ *
+ * @param apiSymbol Símbolo no formato Finnhub (ex: "AAPL")
+ * @returns URL do logo ou null se não houver
+ */
+export async function fetchCompanyLogo(apiSymbol: string): Promise<string | null> {
+  const apiKey = process.env.FINNHUB_API_KEY;
+
+  if (!apiKey || apiKey === "placeholder_temporario") {
+    return null;
+  }
+
+  // Cripto não tem profile — pula direto
+  if (apiSymbol.startsWith("BINANCE:")) {
+    return null;
+  }
+
+  try {
+    const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${apiSymbol}&token=${apiKey}`;
+
+    const response = await fetch(url, {
+      // Cache de 24h: logos são imutáveis
+      next: { revalidate: 86400 },
+    });
+
+    if (!response.ok) {
+      // Erro silencioso — logo é opcional, não derruba o quote
+      console.warn(
+        `[Finnhub] Falha ao buscar logo de ${apiSymbol}: ${response.status}`
+      );
+      return null;
+    }
+
+    const data = (await response.json()) as FinnhubProfile2Response;
+    return data.logo ?? null;
+  } catch (error) {
+    console.warn(`[Finnhub] Erro ao buscar logo de ${apiSymbol}:`, error);
+    return null;
+  }
 }

@@ -159,11 +159,11 @@ export function CurrencyConverter({
           </p>
         </div>
 
-        {/* Você tem */}
+        {/* Moeda atual */}
         <div className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-3">
             <CurrencySelector
-              label="Você tem"
+              label="Moeda atual"
               value={fromCurrency}
               onChange={setFromCurrency}
             />
@@ -206,10 +206,10 @@ export function CurrencyConverter({
             </motion.button>
           </div>
 
-          {/* Você recebe */}
+          {/* Conversão da moeda */}
           <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-3">
             <CurrencySelector
-              label="Você recebe"
+              label="Conversão da moeda"
               value={toCurrency}
               onChange={setToCurrency}
             />

@@ -75,7 +75,7 @@ export function CurrencySelector({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-[var(--color-brand)] focus:border-[var(--color-brand)] focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-between gap-3 px-4 py-2 bg-white border-2 border-gray-200 rounded-xl hover:border-[var(--color-brand)] focus:border-[var(--color-brand)] focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
          <div className="flex items-center gap-3">
           {selected && (
