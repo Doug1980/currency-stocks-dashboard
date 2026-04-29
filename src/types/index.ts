@@ -43,6 +43,8 @@ export interface Stock {
   apiSymbol: string;    // Símbolo na API Finnhub (ex: "BINANCE:BTCUSDT", "AAPL")
   name: string;
   category: CategoryId;
+  /** URL do logo (opcional). Se definido, sobrepõe busca dinâmica via Finnhub. */
+  logoUrl?: string;
 }
 
 export interface StockQuote {
