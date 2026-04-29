@@ -249,3 +249,75 @@
 .scroll-smooth::-webkit-scrollbar {
   display: none;
 }
+
+/* ========================================== */
+/* === BACKGROUND ORBS (gradient com blur) === */
+/* ========================================== */
+
+/**
+ * Container base para páginas com orbs no fundo.
+ * Os orbs ficam fixos (não rolam) e atrás do conteúdo.
+ */
+.has-orbs {
+  position: relative;
+  overflow-x: hidden;
+}
+
+.has-orbs::before,
+.has-orbs::after {
+  content: "";
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+}
+
+/* Orb 1 — superior esquerdo */
+.has-orbs::before {
+  width: 500px;
+  height: 500px;
+  top: -200px;
+  left: -150px;
+}
+
+/* Orb 2 — inferior direito */
+.has-orbs::after {
+  width: 600px;
+  height: 600px;
+  bottom: -250px;
+  right: -200px;
+}
+
+/* Garante que conteúdo fica acima dos orbs */
+.has-orbs > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* === Variante: orbs rubi (Conversor) === */
+.bg-orbs-rubi.has-orbs::before {
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.55), transparent 70%);
+}
+
+.bg-orbs-rubi.has-orbs::after {
+  background: radial-gradient(circle, rgba(185, 28, 28, 0.45), transparent 70%);
+}
+
+/* === Variante: orbs mercado internacional (Stocks US) === */
+.bg-orbs-stocks.has-orbs::before {
+  background: radial-gradient(circle, rgba(5, 150, 105, 0.45), transparent 70%);
+}
+
+.bg-orbs-stocks.has-orbs::after {
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.40), transparent 70%);
+}
+/* === Variante: orbs mercado nacional (Stocks BR — verde + amarelo) === */
+.bg-orbs-br.has-orbs::before {
+  background: radial-gradient(circle, rgba(22, 163, 74, 0.50), transparent 70%);
+}
+
+.bg-orbs-br.has-orbs::after {
+  background: radial-gradient(circle, rgba(217, 119, 6, 0.45), transparent 70%);
+}
