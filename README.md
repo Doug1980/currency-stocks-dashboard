@@ -1,6 +1,6 @@
 <div align="center">
 
-# 💎 FX Finance
+# 🪙💲 FX Finance 
 
 ### Dashboard fintech com cotações de moedas, ações e criptomoedas em tempo real
 
