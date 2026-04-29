@@ -264,8 +264,8 @@ Full Stack Developer • Brasil 🇧🇷
 
 <div align="center">
 
-**Feito com 💎 e muito ☕ em São Paulo**
+**Performance também é UX e Resolver problemas é o trabalho**
 
-⭐ Se gostou do projeto, deixe uma estrela no repositório!
+Gostou do projeto, deixe uma estrela no repositório!
 
 </div>
