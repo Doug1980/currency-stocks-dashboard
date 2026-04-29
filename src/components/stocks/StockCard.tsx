@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Flame } from "lucide-react";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
@@ -21,6 +23,7 @@ interface StockCardProps {
  * - Badge "Em alta" se variação > 3%
  * - Animação de entrada em cascade via index
  * - Suporta ranking (rank prop) pro carrossel Top Movers
+ * - Exibe logo da empresa quando disponível (brapi.dev fornece para BR)
  */
 export function StockCard({
   quote,
@@ -28,7 +31,10 @@ export function StockCard({
   rank,
   currency = "USD",
 }: StockCardProps) {
+  const [logoError, setLogoError] = useState(false);
+
   const currencyLabel = currency === "BRL" ? "R$" : "US$";
+
   // Defesas: se algum campo numérico vier null/undefined, usa 0 como fallback
   const change = quote.change ?? 0;
   const percentChange = quote.percentChange ?? 0;
@@ -40,6 +46,7 @@ export function StockCard({
   const isPositive = change >= 0;
   const isCrypto = quote.category === "crypto";
   const isHot = percentChange > 3;
+  const hasLogo = !!quote.logoUrl && !logoError;
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
 
   return (
@@ -70,27 +77,44 @@ export function StockCard({
         </div>
       )}
 
-      {/* Header: símbolo e nome */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="font-bold text-2xl text-[var(--color-text-primary)] tracking-tight">
-              {quote.symbol}
-            </h3>
-            {isCrypto && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-bold uppercase tracking-wider">
-                24/7
-              </span>
-            )}
+      {/* Header: logo + símbolo + nome */}
+      <div className="flex items-start justify-between mb-4 gap-3">
+        <div className="flex items-start gap-3 min-w-0 flex-1">
+          {/* Logo da empresa (apenas BR via brapi) */}
+          {hasLogo && (
+            <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center overflow-hidden p-1">
+              <Image
+                src={quote.logoUrl!}
+                alt={`Logo ${quote.name}`}
+                width={32}
+                height={32}
+                className="object-contain w-full h-full"
+                onError={() => setLogoError(true)}
+                unoptimized
+              />
+            </div>
+          )}
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-bold text-2xl text-[var(--color-text-primary)] tracking-tight">
+                {quote.symbol}
+              </h3>
+              {isCrypto && (
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 font-bold uppercase tracking-wider">
+                  24/7
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-[var(--color-text-muted)] truncate">
+              {quote.name}
+            </p>
           </div>
-          <p className="text-sm text-[var(--color-text-muted)] truncate">
-            {quote.name}
-          </p>
         </div>
 
         {/* Badge variação */}
         <div
-          className={`flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-bold ${
+          className={`flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-bold ${
             isPositive
               ? "bg-green-50 text-green-700"
               : "bg-red-50 text-red-700"
@@ -106,7 +130,7 @@ export function StockCard({
 
       {/* Preço principal */}
       <div className="mb-4">
-         <div className="flex items-baseline gap-2">
+        <div className="flex items-baseline gap-2">
           <span className="text-xs text-[var(--color-text-muted)] font-mono">
             {currencyLabel}
           </span>

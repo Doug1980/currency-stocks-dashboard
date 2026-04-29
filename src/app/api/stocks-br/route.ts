@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
           };
         }
 
-        return {
+       return {
           symbol: stock.symbol,
           name: stock.name,
           category: stock.category,
@@ -66,6 +66,7 @@ export async function GET(request: NextRequest) {
           open: data.open,
           previousClose: data.previousClose,
           timestamp: data.timestamp,
+          logoUrl: data.logoUrl,
         } satisfies StockQuote;
       });
 

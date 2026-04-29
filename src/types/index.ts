@@ -57,4 +57,6 @@ export interface StockQuote {
   open: number;
   previousClose: number;
   timestamp: number;
+  /** URL do logo SVG da empresa (apenas para ações brasileiras via brapi.dev) */
+  logoUrl?: string;
 }
