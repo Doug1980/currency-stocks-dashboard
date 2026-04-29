@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import { RefreshCw, AlertCircle, Check } from "lucide-react";
+import { useRefreshStatus } from "@/hooks/useRefreshStatus";
 import { Navbar } from "@/components/layout/Navbar";
 import { CategoryCarousel } from "@/components/stocks/CategoryCarousel";
 import { useBrazilianStocks } from "@/hooks/useBrazilianStocks";
@@ -17,6 +18,12 @@ const TOP_MOVERS_BR_CATEGORY = {
 export default function StocksBrPage() {
   const { byCategory, topMovers, loading, error, lastUpdated, refresh } =
     useBrazilianStocks();
+  const refreshStatus = useRefreshStatus(loading);
+
+  function handleRefreshClick() {
+    refreshStatus.trigger();
+    refresh();
+  }
 
   return (
     <main className="min-h-screen bg-[var(--color-bg-base)] has-orbs bg-orbs-br">
@@ -63,13 +70,32 @@ export default function StocksBrPage() {
 
             <button
               type="button"
-              onClick={refresh}
+              onClick={handleRefreshClick}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-200 rounded-xl hover:border-[var(--color-brand)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-semibold"
+              className={`flex items-center gap-2 px-4 py-2 border-2 rounded-xl transition-all text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed ${
+                refreshStatus.status === "success"
+                  ? "bg-green-500 border-green-500 text-white shadow-lg shadow-green-500/30"
+                  : "bg-white border-gray-200 text-[var(--color-text-primary)] hover:border-[var(--color-brand)]"
+              }`}
               aria-label="Atualizar cotações"
             >
-              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
-              <span>Atualizar</span>
+              {refreshStatus.status === "success" ? (
+                <motion.div
+                  key="success"
+                  initial={{ scale: 0, rotate: -90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                  className="flex items-center gap-2"
+                >
+                  <Check size={16} strokeWidth={3} />
+                  <span>Atualizado!</span>
+                </motion.div>
+              ) : (
+                <>
+                  <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+                  <span>Atualizar</span>
+                </>
+              )}
             </button>
           </div>
         </div>
