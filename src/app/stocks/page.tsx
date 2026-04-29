@@ -20,7 +20,7 @@ export default function StocksPage() {
     useStockQuote();
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg-base)]">
+    <main className="min-h-screen bg-[var(--color-bg-base)] has-orbs bg-orbs-stocks">
      <Navbar />
 
       <div className="max-w-7xl mx-auto px-6 pt-8 pb-12">

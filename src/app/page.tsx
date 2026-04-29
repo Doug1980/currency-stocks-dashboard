@@ -16,7 +16,7 @@ export default function Home() {
               </span>
             </div>
 
-            <h1 className="heading-xl mb-6 text-white">FX Dashboard</h1>
+            <h1 className="heading-xl mb-6 text-white">FX Finance</h1>
 
             <p className="text-xl md:text-2xl font-light mb-12 opacity-90 text-white max-w-2xl">
               Conversão de moedas, mercado internacional e ações da B3 com

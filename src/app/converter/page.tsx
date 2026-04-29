@@ -25,7 +25,7 @@ export default function ConverterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg-base)]">
+    <main className="min-h-screen bg-[var(--color-bg-base)] has-orbs bg-orbs-rubi">
       <Navbar />
 
       {/* Conteúdo */}
