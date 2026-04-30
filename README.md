@@ -4,8 +4,7 @@
 
 ### Dashboard fintech com cotações de moedas, ações e criptomoedas em tempo real
 
-[![Live Demo](https://img.shields.io/badge/Demo-Acessar_Online-B91C1C?style=for-the-badge&logo=vercel&logoColor=white)](https://currency-stocks-dashboard.vercel.app/)
-[![GitHub](https://img.shields.io/badge/C%C3%B3digo-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Doug1980/currency-stocks-dashboard)
+
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
